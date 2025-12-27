@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- MyBatis 主配置文件 -->
+<configuration>
+    <!-- 加载数据库连接参数配置文件 -->
+    <properties resource="database.properties" />
+    
+    <!-- MyBatis 全局配置 -->
+    <settings>
+        <!-- 开启二级缓存 -->
+        <setting name="cacheEnabled" value="true" />
+        <!-- 开启延迟加载 -->
+        <setting name="lazyLoadingEnabled" value="true" />
+        <!-- 关闭积极延迟加载 -->
+        <setting name="aggressiveLazyLoading" value="false" />
+        <!-- 使用LOG4J作为日志实现 -->
+        <setting name="logImpl" value="LOG4J" />
+    </settings>
+    
+    <!-- 配置数据库环境 -->
+    <environments default="development">
+        <!-- 开发环境 -->
+        <environment id="development">
+            <!-- 使用JDBC事务管理器 -->
+            <transactionManager type="JDBC" />
+            <!-- 使用连接池数据源 -->
+            <dataSource type="POOLED">
+                <!-- 数据库驱动 -->
+                <property name="driver" value="${jdbc.driver}" />
+                <!-- 数据库连接URL -->
+                <property name="url" value="${jdbc.url}" />
+                <!-- 数据库用户名 -->
+                <property name="username" value="${jdbc.username}" />
+                <!-- 数据库密码 -->
+                <property name="password" value="${jdbc.password}" />
+            </dataSource>
+        </environment>
+    </environments>
+    
+    <!-- 配置映射文件 -->
+    <mappers>
+        <!-- 用户表映射 -->
+        <mapper resource="mappers/UserMapper.xml" />
+        <!-- 商品表映射 -->
+        <mapper resource="mappers/ProductMapper.xml" />
+        <!-- 供应商表映射 -->
+        <mapper resource="mappers/SupplierMapper.xml" />
+        <!-- 仓库表映射 -->
+        <mapper resource="mappers/WarehouseMapper.xml" />
+        <!-- 库存表映射 -->
+        <mapper resource="mappers/InventoryMapper.xml" />
+        <!-- 商品供应商关联表映射 -->
+        <mapper resource="mappers/ProductSupplierMapper.xml" />
+    </mappers>
+</configuration>

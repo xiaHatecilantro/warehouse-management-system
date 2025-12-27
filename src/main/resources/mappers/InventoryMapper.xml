@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.convenience.store.dao.InventoryDao">
+    <!-- 商品ResultMap -->
+    <resultMap id="ProductResultMap" type="com.convenience.store.entity.Product">
+        <id property="productId" column="product_id" />
+        <result property="productName" column="product_name" />
+        <result property="category" column="category" />
+        <result property="unit" column="unit" />
+        <result property="price" column="price" />
+        <result property="description" column="description" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+    
+    <!-- 用户ResultMap -->
+    <resultMap id="UserResultMap" type="com.convenience.store.entity.User">
+        <id property="userId" column="user_id" />
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="fullName" column="full_name" />
+        <result property="email" column="email" />
+        <result property="phone" column="phone" />
+        <result property="role" column="role" />
+        <result property="status" column="status" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+    
+    <!-- 仓库ResultMap -->
+    <resultMap id="WarehouseResultMap" type="com.convenience.store.entity.Warehouse">
+        <id property="warehouseId" column="warehouse_id" />
+        <result property="warehouseName" column="warehouse_name" />
+        <result property="location" column="location" />
+        <result property="capacity" column="capacity" />
+        <result property="managerId" column="manager_id" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        <association property="manager" javaType="com.convenience.store.entity.User" resultMap="UserResultMap" />
+    </resultMap>
+    
+    <!-- 库存ResultMap -->
+    <resultMap id="InventoryResultMap" type="com.convenience.store.entity.Inventory">
+        <id property="inventoryId" column="inventory_id" />
+        <result property="productId" column="product_id" />
+        <result property="warehouseId" column="warehouse_id" />
+        <result property="quantity" column="quantity" />
+        <result property="minStock" column="min_stock" />
+        <result property="lastUpdated" column="last_updated" />
+        <association property="product" javaType="com.convenience.store.entity.Product" resultMap="ProductResultMap" />
+        <association property="warehouse" javaType="com.convenience.store.entity.Warehouse" resultMap="WarehouseResultMap" />
+    </resultMap>
+
+    <select id="getInventoryById" parameterType="int" resultMap="InventoryResultMap">
+        SELECT i.*, p.*, w.*, u.*
+        FROM inventory i
+        JOIN products p ON i.product_id = p.product_id
+        JOIN warehouses w ON i.warehouse_id = w.warehouse_id
+        LEFT JOIN users u ON w.manager_id = u.user_id
+        WHERE i.inventory_id = #{inventoryId}
+    </select>
+
+    <select id="getAllInventory" resultMap="InventoryResultMap">
+        SELECT i.*, p.*, w.*, u.*
+        FROM inventory i
+        JOIN products p ON i.product_id = p.product_id
+        JOIN warehouses w ON i.warehouse_id = w.warehouse_id
+        LEFT JOIN users u ON w.manager_id = u.user_id
+    </select>
+
+    <insert id="insertInventory" parameterType="com.convenience.store.entity.Inventory" useGeneratedKeys="true" keyProperty="inventoryId">
+        INSERT INTO inventory (product_id, warehouse_id, quantity, min_stock)
+        VALUES (#{productId}, #{warehouseId}, #{quantity}, #{minStock})
+    </insert>
+
+    <update id="updateInventory" parameterType="com.convenience.store.entity.Inventory">
+        UPDATE inventory
+        SET product_id = #{productId}, warehouse_id = #{warehouseId}, quantity = #{quantity}, min_stock = #{minStock}
+        WHERE inventory_id = #{inventoryId}
+    </update>
+
+    <delete id="deleteInventory" parameterType="int">
+        DELETE FROM inventory WHERE inventory_id = #{inventoryId}
+    </delete>
+
+    <select id="getInventoryByProductId" parameterType="int" resultMap="InventoryResultMap">
+        SELECT i.*, p.*, w.*, u.*
+        FROM inventory i
+        JOIN products p ON i.product_id = p.product_id
+        JOIN warehouses w ON i.warehouse_id = w.warehouse_id
+        LEFT JOIN users u ON w.manager_id = u.user_id
+        WHERE i.product_id = #{productId}
+    </select>
+</mapper>
